@@ -14,7 +14,7 @@ class Tree
   def build_tree(array, first = 0, last = @data.length - 1)
     return nil if first > last
 
-    mid = ((first + last) / 2)
+    mid = (first + last) / 2
     root_node = Node.new(array[mid])
     root_node.left_node = build_tree(array, first, mid - 1)
     root_node.right_node = build_tree(array, mid + 1, last)
@@ -34,6 +34,39 @@ class Tree
   end
 
   def delete(item, node = @root)
+    return node if node.nil?
+
+    if item < node.value
+      node.left_node = delete(item, node.left_node)
+    elsif item > node.value
+      node.right_node = delete(item, node.right_node)
+    else
+      return node.right_node if node.left_node.nil?
+      return node.left_node if node.right_node.nil?
+
+      node.value = min_value(node.right_node)
+      node.right_node = delete(node.value, node.right_node)
+    end
+  end
+
+  def min_value(node)
+    min = node.value
+    until node.left_node.nil?
+      min = node.left_node.value
+      node = node.left_node
+    end
+    min
+  end
+
+  def find(value, node = @root)
+    return nil if node.value.nil?
+    return node if node.value == value
+
+    find(value, node.left_node) if value < node.value
+    find(value, node.right_node) if value > node.value
+  end
+
+  def level_order
 
   end
 end
@@ -53,3 +86,4 @@ bst = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
 bst.insert(12)
 p bst.delete(3)
 p bst.root
+p bst.find(324)
